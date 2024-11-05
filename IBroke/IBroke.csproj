@@ -18,4 +18,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-rc.2.24473.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="expenses.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

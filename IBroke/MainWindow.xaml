@@ -5,60 +5,82 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IBroke"
         mc:Ignorable="d"
-        Title="Expense Tracker" Height="450" Width="800">
+        Title="Expense Tracker" Height="600" Width="1000">
 
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- For the Entry List View -->
-            <RowDefinition Height="Auto"/>
-            <!-- For the Input Controls -->
-            <RowDefinition Height="Auto"/>
-            <!-- For the Total TextBlocks -->
-            <RowDefinition Height="Auto"/>
-            <!-- For the Filter and Buttons -->
-        </Grid.RowDefinitions>
+    <!-- Main DockPanel to organize the layout -->
+    <DockPanel Margin="10">
 
-        <!-- Entry List View -->
-        <ListView x:Name="entriesListView" Height="200" Grid.Row="0">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="50" />
-                    <GridViewColumn Header="Amount" DisplayMemberBinding="{Binding Amount}" Width="100" />
-                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="100" />
-                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="200" />
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <!-- Right Panel for Monthly Averages (Calculator) -->
+        <Border DockPanel.Dock="Right" Background="#F0F0F0" Padding="10" Width="200" Margin="10,0,0,0" CornerRadius="5">
+            <StackPanel>
+                <TextBlock Text="Monthly Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" TextAlignment="Center" />
 
-        <!-- Input Controls -->
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,10">
-            <TextBox x:Name="amountTextBox" Width="150" Margin="0,0,10,0" />
-            <ComboBox x:Name="typeComboBox" Width="150">
-                <ComboBoxItem Content="Expense" />
-                <ComboBoxItem Content="Income" />
-            </ComboBox>
-        </StackPanel>
+                <!-- Average Income -->
+                <TextBlock Text="Average Income:" FontWeight="Bold" />
+                <TextBlock Text="{Binding AverageIncomePerMonth, StringFormat='{}{0:C}'}" />
 
-        <!-- Total TextBlocks -->
-        <StackPanel Grid.Row="2" Margin="0,10,0,10">
-            <TextBlock Text="Total Income:" />
-            <TextBlock x:Name="totalIncomeText" />
-            <TextBlock Text="Total Expenses:" />
-            <TextBlock x:Name="totalExpensesText" />
-            <TextBlock Text="Net Balance:" />
-            <TextBlock x:Name="netBalanceText" />
-        </StackPanel>
+                <!-- Average Expenditure -->
+                <TextBlock Text="Average Expenditure:" FontWeight="Bold" Margin="0,10,0,0" />
+                <TextBlock Text="{Binding AverageExpenditurePerMonth, StringFormat='{}{0:C}'}" />
 
-        <!-- Filter and Buttons -->
-        <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Top" Margin="0,10,0,0">
-            <ComboBox x:Name="filterComboBox" Width="150" SelectionChanged="FilterComboBox_SelectionChanged" Margin="0,0,10,0">
-                <ComboBoxItem Content="Last 30 Days" />
-                <ComboBoxItem Content="All Entries" />
-            </ComboBox>
-            <Button Content="Add Entry" Width="100" Margin="0,0,10,0" Click="AddEntryButton_Click" />
-            <Button Content="Update Entry" Width="100" Margin="0,0,10,0" Click="UpdateEntryButton_Click" />
-            <Button Content="Delete Entry" Width="100" Click="DeleteEntryButton_Click" />
-        </StackPanel>
-    </Grid>
+                <!-- Average Net Balance -->
+                <TextBlock Text="Average Net Balance:" FontWeight="Bold" Margin="0,10,0,0" />
+                <TextBlock Text="{Binding AverageNetPerMonth, StringFormat='{}{0:C}'}" />
+            </StackPanel>
+        </Border>
+
+        <!-- Main Grid for the rest of the app content -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Entry List View -->
+            <ListView x:Name="entriesListView" SelectionChanged="EntriesListView_SelectionChanged" Height="250" Grid.Row="0" Margin="0,0,0,10">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="50" />
+                        <GridViewColumn Header="Amount" DisplayMemberBinding="{Binding Amount}" Width="100" />
+                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="100" />
+                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="200" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!-- Input Controls -->
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,10">
+                <TextBox x:Name="amountTextBox" Width="150" Margin="0,0,10,0" />
+                <ComboBox x:Name="typeComboBox" Width="150">
+                    <ComboBoxItem Content="Expense" />
+                    <ComboBoxItem Content="Income" />
+                </ComboBox>
+            </StackPanel>
+
+            <!-- Total TextBlocks with a Border for styling -->
+            <Border Grid.Row="2" Background="#E8F1FB" Margin="0,10,0,10" CornerRadius="5" Padding="10">
+                <StackPanel>
+                    <TextBlock Text="{Binding TotalIncomeLabel}" FontWeight="Bold" />
+                    <TextBlock x:Name="totalIncomeText" />
+                    <TextBlock Text="{Binding TotalExpensesLabel}" FontWeight="Bold" />
+                    <TextBlock x:Name="totalExpensesText" />
+                    <TextBlock Text="{Binding NetBalanceLabel}" FontWeight="Bold" />
+                    <TextBlock x:Name="netBalanceText" />
+                </StackPanel>
+            </Border>
+
+            <!-- Filter and Buttons -->
+            <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Top" Margin="0,10,0,0">
+                <ComboBox x:Name="filterComboBox" Width="150" SelectionChanged="FilterComboBox_SelectionChanged" Margin="0,0,10,0">
+                    <ComboBoxItem Content="Last 30 Days" IsSelected="True"/>
+                    <ComboBoxItem Content="All Time" />
+                </ComboBox>
+                <Button Content="Add Entry" Width="100" Margin="0,0,10,0" Click="AddEntryButton_Click" />
+                <Button Content="Update Entry" Width="100" Margin="0,0,10,0" Click="UpdateEntryButton_Click" />
+                <Button Content="Delete Entry" Width="100" Click="DeleteEntryButton_Click" />
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>
